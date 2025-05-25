@@ -16,15 +16,20 @@ def split_features_target(df, target_col):
     y = df[target_col].copy()
     return X, y
 
-def inspect_dataframe(df):
+def inspect_dataframe(df: DataFrame) -> DataFrame:
     """
-    Print shape, dtypes, and missing‐value counts.
+    Return a summary table with columns:
+      - Variables
+      - Type
+      - Missing Values
     """
-    print('Shape:', df.shape)
-    print('Dtypes:')
-    print(df.dtypes)
-    print('Missing values:')
-    print(df.isna().sum())
+    info = pd.DataFrame({
+        "Variables": df.columns.tolist(),
+        "Type": df.dtypes.astype(str).tolist(),
+        "Missing Values": df.isna().sum().tolist()
+    })
+    print(info.to_string(index=False))
+    return info
 
 def get_column_types(df: DataFrame,cat_threshold: int = 10) -> Tuple[List[str], List[str]]:
     """
