@@ -1,0 +1,17 @@
+=== LogisticRegression ===
+Best params: {'clf__C': 0.01, 'clf__penalty': 'l2', 'clf__solver': 'liblinear'}
+
+Classification report:
+              precision    recall  f1-score   support
+
+           0       0.90      0.69      0.78       719
+           1       0.26      0.59      0.36       129
+
+    accuracy                           0.68       848
+   macro avg       0.58      0.64      0.57       848
+weighted avg       0.81      0.68      0.72       848
+
+
+Confusion matrix:
+[[498 221]
+ [ 53  76]]

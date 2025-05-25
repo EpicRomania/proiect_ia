@@ -139,7 +139,7 @@ def countplots(df: DataFrame,
     for ax in axes_flat[len(cols):]:
         fig.delaxes(ax)
 
-    fig.tight_layout()
+    #fig.tight_layout()
     if save_dir:
         os.makedirs(save_dir, exist_ok=True)
         fig.savefig(os.path.join(save_dir, "countplots.png"))
