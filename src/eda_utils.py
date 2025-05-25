@@ -93,7 +93,8 @@ def countplots(df: DataFrame,
                n_cols: int = 3,
                save_dir: Optional[str] = None) -> None:
     """
-    Draw one count-plot per categorical column; skip if empty.
+    Draw one count-plot per categorical column with pastel colors and annotations,
+    avoiding the seaborn palette warning.
     """
     if not cols:
         print("countplots: no categorical columns to plot.")
@@ -101,27 +102,40 @@ def countplots(df: DataFrame,
 
     n_cols = max(1, min(n_cols, len(cols)))
     n_rows = int(np.ceil(len(cols) / n_cols))
-    fig, axes = plt.subplots(n_rows, n_cols,
-                             figsize=(4 * n_cols, 4 * n_rows),
-                             squeeze=False)
+    fig, axes = plt.subplots(
+        n_rows, n_cols,
+        figsize=(4 * n_cols, 4 * n_rows),
+        squeeze=False
+    )
     axes_flat = axes.flatten()
 
     for ax, col in zip(axes_flat, cols):
-        order = df[col].value_counts().index
-        sns.countplot(data=df,
-                      x=col,
-                      ax=ax,
-                      order=order,
-                      palette='pastel',
-                      edgecolor='black')
+        counts = df[col].value_counts()
+        order = counts.index.tolist()
+        # draw bars manually
+        pastel_colors = sns.color_palette('pastel', len(order))
+        bars = ax.bar(
+            x=range(len(order)),
+            height=counts.values,
+            color=pastel_colors,
+            edgecolor='black',
+            linewidth=1
+        )
+        ax.set_xticks(range(len(order)))
+        ax.set_xticklabels(order, rotation=45)
         ax.set_title(col)
-        ax.tick_params(axis="x", rotation=45)
+        ax.set_ylabel('count')
         # annotate bar heights
-        for p in ax.patches:
-            ax.annotate(int(p.get_height()),
-                        (p.get_x() + p.get_width() / 2, p.get_height()),
-                        ha='center', va='bottom', fontsize=8)
+        for bar in bars:
+            h = int(bar.get_height())
+            ax.annotate(
+                h,
+                (bar.get_x() + bar.get_width() / 2, h),
+                ha='center', va='bottom',
+                fontsize=8
+            )
 
+    # drop unused axes
     for ax in axes_flat[len(cols):]:
         fig.delaxes(ax)
 
@@ -130,6 +144,8 @@ def countplots(df: DataFrame,
         os.makedirs(save_dir, exist_ok=True)
         fig.savefig(os.path.join(save_dir, "countplots.png"))
     plt.show()
+
+
 
 
 
